@@ -7,7 +7,7 @@ import java.io.OutputStream;
  * @description 导出顶层接口
  * @create 2018-12-10 11:01
  */
-public interface BaseExportHandler {
+public interface ExportHandler {
 
     public void writeFile(String path);
 

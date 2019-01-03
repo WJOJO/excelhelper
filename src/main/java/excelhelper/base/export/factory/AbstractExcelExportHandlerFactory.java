@@ -1,9 +1,6 @@
 package excelhelper.base.export.factory;
 
-import excelhelper.base.constants.WorkbookType;
-import excelhelper.base.export.AbstractExcelExportHandler;
-import excelhelper.base.export.BaseListExportHandler;
-import org.apache.poi.ss.usermodel.Workbook;
+import excelhelper.base.export.ListExportHandler;
 
 /**
  * @author Javon Wang
@@ -12,6 +9,6 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 public abstract class AbstractExcelExportHandlerFactory {
 
-    public abstract BaseListExportHandler createHandler();
+    public abstract ListExportHandler createHandler();
 
 }

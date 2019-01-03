@@ -1,17 +1,7 @@
 package excelhelper.base.export.factory;
 
-import excelhelper.annotations.ExcelColumn;
-import excelhelper.annotations.ExcelTable;
-import excelhelper.base.export.BaseList2ExcelExporthandler;
-import excelhelper.base.export.BaseListExportHandler;
-import excelhelper.base.export.DefaultSSEExportHandler;
-import excelhelper.util.ReflectUtil;
-import org.apache.poi.ss.formula.functions.T;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-
-import java.util.ArrayList;
-import java.util.List;
+import excelhelper.base.export.List2ExcelExportHandler;
+import excelhelper.base.export.DefaultSingleSheetExportHandler;
 
 /**
  * @author Javon Wang
@@ -21,8 +11,8 @@ import java.util.List;
 public class SSEExportHandlerFactory extends AbstractExcelExportHandlerFactory {
 
     @Override
-    public BaseList2ExcelExporthandler createHandler() {
-        return new DefaultSSEExportHandler();
+    public List2ExcelExportHandler createHandler() {
+        return new DefaultSingleSheetExportHandler();
     }
 
 

@@ -7,10 +7,10 @@ import java.util.List;
  * @description single sheet Excel 导出类
  * @create 2018-12-06 15:19
  */
-public class DefaultSSEExportHandler<T> extends AbstractExcelExportHandler<T>{
+public class DefaultSingleSheetExportHandler<T> extends List2ExcelExportHandler<T> {
 
     @Override
-    public void writeToSheet(List<T> beanList) {
+    public void writeToWorkBook(List<T> beanList) {
         for (T bean :
                 beanList) {
             System.out.println("开始写入第" + rowNum + "行:" + bean);
@@ -19,7 +19,7 @@ public class DefaultSSEExportHandler<T> extends AbstractExcelExportHandler<T>{
     }
 
     @Override
-    public List<T> transformBeanList(List<T> beanList) {
+    public <T> List<T> beanListConvert(List<T> beanList) {
         return beanList;
     }
 }

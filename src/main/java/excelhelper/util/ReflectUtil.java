@@ -2,7 +2,7 @@ package excelhelper.util;
 
 import excelhelper.annotations.DatePattern;
 import excelhelper.annotations.ExcelColumn;
-import excelhelper.enums.DefaultDatePattern;
+import excelhelper.enums.DefaultDatePatternEnum;
 import excelhelper.util.date.DateFormatFactory;
 
 import java.lang.reflect.Field;
@@ -46,7 +46,7 @@ public class ReflectUtil {
             }
             //日期格式
             if (Date.class.isAssignableFrom(field.getType())){
-                String pattern = DefaultDatePattern.DEFAULT_DATE_PATTERN.getPattern();
+                String pattern = DefaultDatePatternEnum.DEFAULT_DATE_PATTERN.getPattern();
                 if(field.isAnnotationPresent(DatePattern.class)){
                     pattern = field.getAnnotation(DatePattern.class).pattern();
                 }
@@ -84,12 +84,11 @@ public class ReflectUtil {
             }
             //Date类型
             if(Date.class.isAssignableFrom(method.getReturnType())){
-                String pattern = DefaultDatePattern.DEFAULT_DATE_PATTERN.getPattern();
+                String pattern = DefaultDatePatternEnum.DEFAULT_DATE_PATTERN.getPattern();
                 if(method.isAnnotationPresent(DatePattern.class)){
                     pattern = method.getAnnotation(DatePattern.class).pattern();
                 }
-                String dateString = DateFormatFactory.createDateFormat(pattern).format((Date) method.invoke(bean));
-                return dateString;
+                return DateFormatFactory.createDateFormat(pattern).format((Date) method.invoke(bean));
             }
             return method.invoke(bean).toString();
         } catch (IllegalAccessException e) {
@@ -111,25 +110,23 @@ public class ReflectUtil {
     public static List<Object[]> getAnnotations(Class<?> cls){
         List<Object[]> annotationList = new ArrayList<>();
         Field[] fields = cls.getDeclaredFields();
-        Arrays.stream(fields).filter(field -> {
-            return field.isAnnotationPresent(ExcelColumn.class);
-        }).forEach(field -> {
-            annotationList.add(new Object[]{field.getAnnotation(ExcelColumn.class), field});
-        });
+        Arrays.stream(fields).filter(field ->
+            field.isAnnotationPresent(ExcelColumn.class)
+        ).forEach(field ->
+            annotationList.add(new Object[]{field.getAnnotation(ExcelColumn.class), field})
+        );
 
         Method[] methods = cls.getDeclaredMethods();
-        Arrays.stream(methods).filter(method -> {
-            return method.isAnnotationPresent(ExcelColumn.class);
-        }).forEach(method -> {
-            annotationList.add(new Object[]{method.getAnnotation(ExcelColumn.class), method});
-        });
+        Arrays.stream(methods).filter(method ->
+             method.isAnnotationPresent(ExcelColumn.class)
+        ).forEach(method ->
+            annotationList.add(new Object[]{method.getAnnotation(ExcelColumn.class), method})
+        );
 
-        return  annotationList.stream().sorted(new Comparator<Object[]>() {
-            @Override
-            public int compare(Object[] o1, Object[] o2) {
-                return ((ExcelColumn)o1[0]).sort() - ((ExcelColumn)o2[0]).sort();
-            }
-        }).collect(Collectors.toList());
+        return annotationList.stream().sorted(((o1, o2) -> {
+            return ((ExcelColumn)o1[0]).sort() - ((ExcelColumn)o2[0]).sort();
+        })).collect(Collectors.toList());
+
     }
 
 }

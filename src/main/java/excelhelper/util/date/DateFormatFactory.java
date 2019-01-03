@@ -1,8 +1,10 @@
 package excelhelper.util.date;
 
-import excelhelper.enums.DefaultDatePattern;
+import excelhelper.enums.DefaultDatePatternEnum;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,11 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DateFormatFactory {
 
-    /**
-     * @Description: 存放所有的日期格式转换器
-     */
-    public static final Map<String, SimpleDateFormat> dateFormaters
-            = new ConcurrentHashMap<String, SimpleDateFormat>();
+    private static ThreadLocal<DateFormat> dateFormatThreadLocal;
+
 
     /**
      * @Description: 根据日期格式创建dateFormat
@@ -27,23 +26,20 @@ public class DateFormatFactory {
      * @Date: 2018/12/6
      * @Time: 11:11
      */
-    public static SimpleDateFormat createDateFormat(String pattern){
-
-        try {
-            if(dateFormaters.size() == 0){
-                dateFormaters.put(DefaultDatePattern.DEFAULT_DATE_PATTERN.getPattern(),
-                        new SimpleDateFormat(DefaultDatePattern.DEFAULT_DATE_PATTERN.getPattern()));
+    public static DateFormat createDateFormat(final String pattern){
+        if (dateFormatThreadLocal == null){
+            synchronized (dateFormatThreadLocal){
+                if (dateFormatThreadLocal == null){
+                    dateFormatThreadLocal = new ThreadLocal<DateFormat>(){
+                        @Override
+                        protected DateFormat initialValue() {
+                            return new SimpleDateFormat(pattern);
+                        }
+                    };
+                }
             }
-            if(dateFormaters.get(pattern) == null){
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-                dateFormaters.put(pattern, simpleDateFormat);
-                return simpleDateFormat;
-            }else{
-                return dateFormaters.get(pattern);
-            }
-        } catch (Exception e) {
-            //异常返回默认日期格式 dateformat
-            return dateFormaters.get(DefaultDatePattern.DEFAULT_DATE_PATTERN.getPattern());
         }
+        return dateFormatThreadLocal.get();
     }
+
 }

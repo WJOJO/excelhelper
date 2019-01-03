@@ -4,7 +4,6 @@ import excelhelper.annotations.ExcelColumn;
 import excelhelper.annotations.ExcelTable;
 import excelhelper.util.ReflectUtil;
 import excelhelper.util.comparator.AnnotationTreeMapComparator;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -19,10 +18,11 @@ import java.util.*;
 
 /**
  * @author Javon Wang
- * @description excel导出处理抽象类
- * @create 2018-12-06 13:36
+ * @description list导出excel接口
+ * @create 2018-12-10 10:54
  */
-public abstract class AbstractExcelExportHandler<T> implements BaseList2ExcelExporthandler<T> {
+public abstract class List2ExcelExportHandler<T>  implements ListExportHandler {
+
 
     /**
      * excel工作簿
@@ -64,15 +64,12 @@ public abstract class AbstractExcelExportHandler<T> implements BaseList2ExcelExp
     protected int columnNum;
 
 
-
-    public void writeToWorkBook(List<T> beanList) {
-        writeToSheet(beanList);
-    }
-
     /**
-     * 抽象写入sheet的方法
+     * 抽象List写入工作空间的方法
+     * @param beanList
      */
-    public abstract void writeToSheet(List<T> beanList);
+    public abstract void writeToWorkBook(List<T> beanList);
+
 
 
     /**
@@ -82,11 +79,9 @@ public abstract class AbstractExcelExportHandler<T> implements BaseList2ExcelExp
      * @Time: 14:40
      */
     protected void wirteRow(T bean){
-
         System.out.printf("第%d行开始写入:", rowNum);
-
         createRow();
-        Iterator<Map.Entry<ExcelColumn, AccessibleObject>> iterator = 
+        Iterator<Map.Entry<ExcelColumn, AccessibleObject>> iterator =
                 annotationTreeMap.entrySet().iterator();
         while(iterator.hasNext()){
             Map.Entry<ExcelColumn, AccessibleObject> annoKey = iterator.next();
@@ -130,7 +125,7 @@ public abstract class AbstractExcelExportHandler<T> implements BaseList2ExcelExp
         return row.createCell(columnNum ++);
     }
 
-
+    @Override
     public void writeFile(String path) {
         try {
             FileOutputStream stream = new FileOutputStream(path);
@@ -140,6 +135,7 @@ public abstract class AbstractExcelExportHandler<T> implements BaseList2ExcelExp
         }
     }
 
+    @Override
     public void writeStream(OutputStream os) {
         try {
             workbook.write(os);
@@ -149,15 +145,11 @@ public abstract class AbstractExcelExportHandler<T> implements BaseList2ExcelExp
         }
     }
 
-    @Override
-    public void init(Class<T> cls) {
+
+    public void initWorkbook(Class<T> cls) {
         initWorkBook();
         initSheet(cls);
         initAnnotationTreeMap(cls);
-
-
-
-
     }
 
     private void initWorkBook(){
@@ -235,68 +227,4 @@ public abstract class AbstractExcelExportHandler<T> implements BaseList2ExcelExp
         }
     }
 
-
-    public Workbook getWorkbook() {
-        return workbook;
-    }
-
-    public void setWorkbook(Workbook workbook) {
-        this.workbook = workbook;
-    }
-
-    public List<String> getColumnNameList() {
-        return columnNameList;
-    }
-
-    public void setColumnNameList(List<String> columnNameList) {
-        this.columnNameList = columnNameList;
-    }
-
-    public CellStyle getCellStyle() {
-        return cellStyle;
-    }
-
-    public void setCellStyle(CellStyle cellStyle) {
-        this.cellStyle = cellStyle;
-    }
-
-    public Sheet getSheet() {
-        return sheet;
-    }
-
-    public void setSheet(Sheet sheet) {
-        this.sheet = sheet;
-    }
-
-    public int getRowNum() {
-        return rowNum;
-    }
-
-    public void setRowNum(int rowNum) {
-        this.rowNum = rowNum;
-    }
-
-    public Row getRow() {
-        return row;
-    }
-
-    public void setRow(Row row) {
-        this.row = row;
-    }
-
-    public int getColumnNum() {
-        return columnNum;
-    }
-
-    public void setColumnNum(int columnNum) {
-        this.columnNum = columnNum;
-    }
-
-    public TreeMap<ExcelColumn, AccessibleObject> getAnnotationTreeMap() {
-        return annotationTreeMap;
-    }
-
-    public void setAnnotationTreeMap(TreeMap<ExcelColumn, AccessibleObject> annotationTreeMap) {
-        this.annotationTreeMap = annotationTreeMap;
-    }
 }

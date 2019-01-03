@@ -1,5 +1,7 @@
 package excelhelper.annotations;
 
+import excelhelper.base.constants.WorkbookType;
+
 import javax.xml.bind.Element;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,4 +30,9 @@ public @interface ExcelTable {
      * sheet名字
      */
     String sheetName() default "Export";
+
+    /**
+     * excel工作空间类型
+     */
+    WorkbookType workbookType() default WorkbookType.SXSSF;
 }

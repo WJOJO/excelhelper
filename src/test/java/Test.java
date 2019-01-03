@@ -1,5 +1,4 @@
-import excelhelper.base.export.BaseList2ExcelExporthandler;
-import excelhelper.base.export.BaseListExportHandler;
+import excelhelper.base.export.List2ExcelExportHandler;
 import excelhelper.base.export.factory.SSEExportHandlerFactory;
 
 import java.util.ArrayList;
@@ -22,9 +21,9 @@ public class Test {
         }
 
 
-        BaseList2ExcelExporthandler handler =
+        List2ExcelExportHandler handler =
                 new SSEExportHandlerFactory().createHandler();
-        handler.init(User.class);
+        handler.initWorkbook(User.class);
         handler.writeToWorkBook(users);
 
         handler.writeFile("D://test.xlsx");
