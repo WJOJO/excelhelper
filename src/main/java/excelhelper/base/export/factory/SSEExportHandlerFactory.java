@@ -1,7 +1,8 @@
 package excelhelper.base.export.factory;
 
-import excelhelper.base.export.List2ExcelExportHandler;
-import excelhelper.base.export.DefaultSingleSheetExportHandler;
+import excelhelper.base.export.excel.DefaultSingleSheetExportHandler;
+import excelhelper.base.export.ListExportHandler;
+import excelhelper.base.intercepter.Convertor;
 
 /**
  * @author Javon Wang
@@ -11,9 +12,12 @@ import excelhelper.base.export.DefaultSingleSheetExportHandler;
 public class SSEExportHandlerFactory extends AbstractExcelExportHandlerFactory {
 
     @Override
-    public List2ExcelExportHandler createHandler() {
-        return new DefaultSingleSheetExportHandler();
+    public ListExportHandler createHandler(Class<?> beanClass) {
+        return new DefaultSingleSheetExportHandler(beanClass);
     }
 
-
+    @Override
+    public ListExportHandler createHandler(Class<?> beanClass, Convertor convertor) {
+        return new DefaultSingleSheetExportHandler(beanClass, convertor);
+    }
 }

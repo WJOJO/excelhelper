@@ -35,4 +35,10 @@ public @interface ExcelTable {
      * excel工作空间类型
      */
     WorkbookType workbookType() default WorkbookType.SXSSF;
+
+    /**
+     * 分页字段 对应顺序 group1 group2 group3
+     */
+    String[] pagingColumn() default {};
+
 }
