@@ -1,4 +1,4 @@
-package excelhelper.base.export;
+package excelhelper.base.exp;
 
 import excelhelper.annotations.ExcelColumn;
 import excelhelper.annotations.ExcelTable;

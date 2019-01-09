@@ -1,9 +1,9 @@
-package excelhelper.base.export.excel;
+package excelhelper.base.exp.excel;
 
 
-import excelhelper.base.export.SheetWriter;
+import excelhelper.base.config.ExcelConfig;
+import excelhelper.base.exp.SheetWriter;
 import excelhelper.base.intercepter.Convertor;
-import excelhelper.base.intercepter.DefaultConvertor;
 import excelhelper.util.ReflectUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,24 +25,21 @@ public class DefaultMutiSheetExportHandler<T> extends List2ExcelExportHandler<T>
 
     private Convertor convertor;
 
-    public DefaultMutiSheetExportHandler(Class<T> cls){
-        this(cls, new DefaultConvertor());
-    }
 
-
-    public DefaultMutiSheetExportHandler(Class<T> cls, Convertor convertor){
+    public DefaultMutiSheetExportHandler(Class<T> cls, Convertor convertor, Integer group){
         super();
-        super.init(cls);
+        ExcelConfig excelConfig = new ExcelConfig(cls, group);
+        super.init(excelConfig);
         this.convertor = convertor;
     }
 
 
     @Override
-    public void export(List<T> beanList){
+    public void writeList(List<T> beanList){
         beanList = listSorted(beanList);
-        String pagingColumn = getExcelTable().pagingColumn()[0];
+        String pagingColumn = excelConfig.getExcelTable().pagingColumn()[excelConfig.getGroup()-1];
         try {
-            Field field = getBeanClass().getDeclaredField(pagingColumn);
+            Field field = excelConfig.getCls().getDeclaredField(pagingColumn);
             Consumer<T> consumer = (t) -> {
                 String sheetName = pagingColumn + "-" + ReflectUtil.getValueFromField(field, t);
                 SheetWriter<T> sheetWriter = sheetWriterMap.get(sheetName);

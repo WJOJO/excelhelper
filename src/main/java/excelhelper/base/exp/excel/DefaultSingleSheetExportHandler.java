@@ -1,8 +1,8 @@
-package excelhelper.base.export.excel;
+package excelhelper.base.exp.excel;
 
-import excelhelper.base.export.SheetWriter;
+import excelhelper.base.config.ExcelConfig;
+import excelhelper.base.exp.SheetWriter;
 import excelhelper.base.intercepter.Convertor;
-import excelhelper.base.intercepter.DefaultConvertor;
 
 import java.util.List;
 
@@ -15,19 +15,17 @@ public class DefaultSingleSheetExportHandler<T> extends List2ExcelExportHandler<
 
     private SheetWriter sheetWriter;
 
-    public DefaultSingleSheetExportHandler(Class<T> cls){
-        this(cls, new DefaultConvertor());
-    }
 
-    public DefaultSingleSheetExportHandler(Class<T> cls, Convertor convertor){
+    public DefaultSingleSheetExportHandler(Class<T> cls, Convertor convertor, Integer group){
         super();
-        super.init(cls);
-        this.sheetWriter = super.prepareSheetWriter(convertor, getExcelTable().sheetName());
+        ExcelConfig excelConfig = new ExcelConfig(cls, group);
+        super.init(excelConfig);
+        this.sheetWriter = super.prepareSheetWriter(convertor, excelConfig.getExcelTable().sheetName());
     }
 
 
     @Override
-    public void export(List<T> beanList) {
+    public void writeList(List<T> beanList) {
         beanList = listSorted(beanList);
         sheetWriter.write(beanList, getCellStyle());
     }

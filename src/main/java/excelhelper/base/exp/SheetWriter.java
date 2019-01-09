@@ -1,4 +1,4 @@
-package excelhelper.base.export;
+package excelhelper.base.exp;
 
 import excelhelper.annotations.ExcelColumn;
 import excelhelper.base.intercepter.Convertor;
@@ -77,19 +77,49 @@ public class SheetWriter<T> {
             if(cellStyle != null){
                 cell.setCellStyle(cellStyle);
             }
+            Object value = null;
             AccessibleObject fieldOrMethod = annoKey.getValue();
-            String value = "";
             if (fieldOrMethod instanceof Field) {
                 value = ReflectUtil.getValueFromField((Field) fieldOrMethod, bean);
-                cell.setCellValue(value);
+                writeCellByType(cell, value);
             }else{
                 value = ReflectUtil.getValueFromMethod((Method)fieldOrMethod, bean);
-                cell.setCellValue(value);
+                writeCellByType(cell, value);
             }
-            log.debug(value);
         }
         columnNum = 0;
     }
+
+    /**
+     * @Description: 按格式写入单元格
+     * @Author: Javon Wang
+     * @Date: 2019/1/9
+     * @Time: 17:28
+     */
+    private void writeCellByType(Cell cell, Object value){
+        switch (value.getClass().getSimpleName()){
+            case "void":
+                cell.setCellType(CellType._NONE);
+                break;
+            case "boolean":
+                cell.setCellType(CellType.BOOLEAN);
+            case "int":
+            case "long":
+            case "short":
+            case "byte":
+            case "char":
+            case "float":
+            case "double":
+            case "String":
+                cell.setCellValue(String.valueOf(value));
+                break;
+            default:
+                cell.setCellValue(value.toString());
+        }
+        log.debug("写入单元格：" + String.valueOf(value));
+    }
+
+
 
     /**
      * @Description: 创建表格头

@@ -1,4 +1,4 @@
-package excelhelper.base.export;
+package excelhelper.base.exp;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public interface ListExportHandler<T> extends ExportHandler {
      * @Date: 2019/1/4
      * @Time: 16:33
      */
-    void export(List<T> beanList);
+    void writeList(List<T> beanList);
 
 
 }

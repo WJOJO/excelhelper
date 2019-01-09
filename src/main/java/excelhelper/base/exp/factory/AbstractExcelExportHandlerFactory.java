@@ -1,6 +1,6 @@
-package excelhelper.base.export.factory;
+package excelhelper.base.exp.factory;
 
-import excelhelper.base.export.ListExportHandler;
+import excelhelper.base.exp.ListExportHandler;
 import excelhelper.base.intercepter.Convertor;
 
 /**
@@ -12,5 +12,6 @@ public abstract class AbstractExcelExportHandlerFactory {
 
     public abstract ListExportHandler createHandler(Class<?> beanClass);
     public abstract ListExportHandler createHandler(Class<?> beanClass, Convertor convertor);
+    public abstract ListExportHandler createHandler(Class<?> beanClass, Convertor convertor, Integer group);
 
 }
