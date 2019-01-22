@@ -4,6 +4,7 @@ import excelhelper.annotations.ExcelColumn;
 import excelhelper.annotations.ExcelTable;
 import excelhelper.util.comparator.AnnotationTreeMapComparator;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.lang.reflect.AccessibleObject;
 import java.util.*;
@@ -53,6 +54,10 @@ public class ExcelConfiguration {
     private CellStyle cellStyle;
 
 
+    /**
+     * 工作空间
+     */
+    private Workbook workbook;
 
 
     public ExcelConfiguration(Class<?> cls){
@@ -190,5 +195,13 @@ public class ExcelConfiguration {
 
     public void setCellStyle(CellStyle cellStyle) {
         this.cellStyle = cellStyle;
+    }
+
+    public Workbook getWorkbook() {
+        return workbook;
+    }
+
+    public void setWorkbook(Workbook workbook) {
+        this.workbook = workbook;
     }
 }

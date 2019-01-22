@@ -21,7 +21,7 @@ import java.util.Map;
  * @description bean导出excel
  * @create 2019-01-22 13:54
  */
-public class BeanSheetWriter<T> {
+public class BeanSheetWriter<T> implements BaseSheetWriter<T>{
 
     private final DataInterceptor dataInterceptor;
 
@@ -88,6 +88,7 @@ public class BeanSheetWriter<T> {
     }
 
 
+    @Override
     public void writeData(List<T> beanList){
         dataInterceptor.translate(beanList).parallelStream().peek(bean -> convertor.convert(bean))
                 .parallel().forEach(this::writeRow);
