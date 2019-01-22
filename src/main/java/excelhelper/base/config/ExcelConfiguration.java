@@ -2,8 +2,6 @@ package excelhelper.base.config;
 
 import excelhelper.annotations.ExcelColumn;
 import excelhelper.annotations.ExcelTable;
-import excelhelper.base.constants.CellStyleType;
-import excelhelper.util.ArrayUtils;
 import excelhelper.util.comparator.AnnotationTreeMapComparator;
 import org.apache.poi.ss.usermodel.CellStyle;
 
@@ -15,7 +13,7 @@ import java.util.*;
  * @description excel导出配置信息
  * @create 2019-01-09 15:59
  */
-public class ExcelConfig {
+public class ExcelConfiguration {
 
     /**
      * 类对象
@@ -41,13 +39,27 @@ public class ExcelConfig {
      * 导出组
      */
     private Integer group;
+    /**
+     * 合并表格名称的单元格样式
+     */
+    private CellStyle tableNameCellStyle;
+    /**
+     * 列头样式
+     */
+    private CellStyle columnTitleCellStyle;
+    /**
+     * 单元格样式
+     */
+    private CellStyle cellStyle;
 
 
-    public ExcelConfig(Class<?> cls){
+
+
+    public ExcelConfiguration(Class<?> cls){
         this(cls, null);
     }
 
-    public ExcelConfig(Class<?> cls, Integer group){
+    public ExcelConfiguration(Class<?> cls, Integer group){
         this.cls = cls;
         if( ! cls.isAnnotationPresent(ExcelTable.class)){
             throw new RuntimeException("无注解，初始化失败");
@@ -154,5 +166,29 @@ public class ExcelConfig {
 
     public void setGroup(Integer group) {
         this.group = group;
+    }
+
+    public CellStyle getTableNameCellStyle() {
+        return tableNameCellStyle;
+    }
+
+    public void setTableNameCellStyle(CellStyle tableNameCellStyle) {
+        this.tableNameCellStyle = tableNameCellStyle;
+    }
+
+    public CellStyle getColumnTitleCellStyle() {
+        return columnTitleCellStyle;
+    }
+
+    public void setColumnTitleCellStyle(CellStyle columnTitleCellStyle) {
+        this.columnTitleCellStyle = columnTitleCellStyle;
+    }
+
+    public CellStyle getCellStyle() {
+        return cellStyle;
+    }
+
+    public void setCellStyle(CellStyle cellStyle) {
+        this.cellStyle = cellStyle;
     }
 }

@@ -11,5 +11,4 @@ public interface ListImpHandler<T> extends ImpHandler {
 
     List<T> readList();
 
-    void handleDateList(List<T> list);
 }

@@ -24,13 +24,13 @@ import java.util.TreeMap;
 @Slf4j
 public class SheetWriter<T> {
 
-    private Sheet sheet;
+    private final Sheet sheet;
 
     private int rowNum;
 
     private int columnNum;
 
-    private Convertor convertor;
+    private final Convertor convertor;
 
     /**
      * 存放排序好的所有要导出的field或者Method
@@ -77,7 +77,7 @@ public class SheetWriter<T> {
             if(cellStyle != null){
                 cell.setCellStyle(cellStyle);
             }
-            Object value = null;
+            String value = "";
             AccessibleObject fieldOrMethod = annoKey.getValue();
             if (fieldOrMethod instanceof Field) {
                 value = ReflectUtil.getValueFromField((Field) fieldOrMethod, bean);
@@ -96,26 +96,8 @@ public class SheetWriter<T> {
      * @Date: 2019/1/9
      * @Time: 17:28
      */
-    private void writeCellByType(Cell cell, Object value){
-        switch (value.getClass().getSimpleName()){
-            case "void":
-                cell.setCellType(CellType._NONE);
-                break;
-            case "boolean":
-                cell.setCellType(CellType.BOOLEAN);
-            case "int":
-            case "long":
-            case "short":
-            case "byte":
-            case "char":
-            case "float":
-            case "double":
-            case "String":
-                cell.setCellValue(String.valueOf(value));
-                break;
-            default:
-                cell.setCellValue(value.toString());
-        }
+    private void writeCellByType(Cell cell, String value){
+        cell.setCellValue(value);
         log.debug("写入单元格：" + String.valueOf(value));
     }
 
@@ -155,8 +137,4 @@ public class SheetWriter<T> {
         columnNum = 0;
     }
 
-
-    public void setConvertor(Convertor convertor) {
-        this.convertor = convertor;
-    }
 }

@@ -1,7 +1,7 @@
 package excelhelper.base.exp.excel;
 
 
-import excelhelper.base.config.ExcelConfig;
+import excelhelper.base.config.ExcelConfiguration;
 import excelhelper.base.exp.SheetWriter;
 import excelhelper.base.intercepter.Convertor;
 import excelhelper.util.ReflectUtil;
@@ -28,7 +28,7 @@ public class DefaultMutiSheetExportHandler<T> extends List2ExcelExportHandler<T>
 
     public DefaultMutiSheetExportHandler(Class<T> cls, Convertor convertor, Integer group){
         super();
-        ExcelConfig excelConfig = new ExcelConfig(cls, group);
+        ExcelConfiguration excelConfig = new ExcelConfiguration(cls, group);
         super.init(excelConfig);
         this.convertor = convertor;
     }

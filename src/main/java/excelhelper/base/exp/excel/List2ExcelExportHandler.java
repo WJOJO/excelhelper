@@ -1,6 +1,6 @@
 package excelhelper.base.exp.excel;
 
-import excelhelper.base.config.ExcelConfig;
+import excelhelper.base.config.ExcelConfiguration;
 import excelhelper.base.constants.WorkbookType;
 import excelhelper.base.exp.ListExportHandler;
 import excelhelper.base.exp.SheetWriter;
@@ -26,7 +26,7 @@ public abstract class List2ExcelExportHandler<T>  implements ListExportHandler<T
     /**
      * excel导入导出配置
      */
-    protected ExcelConfig excelConfig;
+    protected ExcelConfiguration excelConfig;
 
     /**
      * excel工作簿
@@ -63,9 +63,9 @@ public abstract class List2ExcelExportHandler<T>  implements ListExportHandler<T
                     excelConfig.getColumnNameList().size(), cellStyle);
         }
         sheetWriter.createColumnTitle(excelConfig.getColumnNameList(), cellStyle);
-        sheetWriter.setConvertor(convertor);
         return sheetWriter;
     }
+
 
 
     @Override
@@ -95,7 +95,7 @@ public abstract class List2ExcelExportHandler<T>  implements ListExportHandler<T
      * @Date: 2019/1/4
      * @Time: 10:56
      */
-    public void init(ExcelConfig excelConfig) {
+    public void init(ExcelConfiguration excelConfig) {
         this.excelConfig = excelConfig;
         initWorkBook();
         initCellStyle();
