@@ -2,7 +2,6 @@ package excelhelper.base.exp.core;
 
 import excelhelper.annotations.ExcelColumn;
 import excelhelper.base.config.ExcelConfiguration;
-import excelhelper.base.intercepter.Convertor;
 import excelhelper.util.ReflectUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -23,10 +22,6 @@ import java.util.Map;
  */
 public class BeanSheetWriter<T> implements BaseSheetWriter<T>{
 
-    private final DataInterceptor dataInterceptor;
-
-    private final Convertor convertor;
-
     private final Sheet sheet;
 
     private final ExcelConfiguration configuration;
@@ -36,13 +31,10 @@ public class BeanSheetWriter<T> implements BaseSheetWriter<T>{
     private int columnNum = 0;
 
 
-    public BeanSheetWriter(Sheet sheet, ExcelConfiguration configuration,
-                           DataInterceptor dataInterceptor, Convertor convertor){
+    public BeanSheetWriter(String sheetName, ExcelConfiguration configuration){
         super();
         this.configuration = configuration;
-        this.sheet = sheet;
-        this.dataInterceptor = dataInterceptor;
-        this.convertor = convertor;
+        this.sheet = configuration.getWorkbook().createSheet(sheetName);
         initSheet();
     }
 
@@ -90,11 +82,13 @@ public class BeanSheetWriter<T> implements BaseSheetWriter<T>{
 
     @Override
     public void writeData(List<T> beanList){
-        dataInterceptor.translate(beanList).parallelStream().peek(bean -> convertor.convert(bean))
+        configuration.getDataInterceptor().translate(beanList).parallelStream()
+                .peek(bean -> configuration.getConvertor().convert(bean))
                 .parallel().forEach(this::writeRow);
     }
 
-    private void writeRow(T bean){
+    @Override
+    public void writeRow(T bean){
         Row row = sheet.createRow(rowNum++);
         Iterator<Map.Entry<ExcelColumn, AccessibleObject>> iterator =
                 configuration.getAnnotationTreeMap().entrySet().iterator();

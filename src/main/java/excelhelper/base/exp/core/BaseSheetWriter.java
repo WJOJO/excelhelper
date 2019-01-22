@@ -11,4 +11,6 @@ public interface BaseSheetWriter<T> {
 
     void writeData(List<T> beanList);
 
+    void writeRow(T bean);
+
 }

@@ -2,9 +2,8 @@ package excelhelper.base.exp.core;
 
 import excelhelper.base.config.ExcelConfiguration;
 import excelhelper.base.exp.ListExportHandler;
-import excelhelper.base.exp.SheetWriter;
 import excelhelper.util.ReflectUtil;
-import org.apache.poi.ss.usermodel.Workbook;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,9 +18,10 @@ import java.util.function.Consumer;
  * @description 默认实现的excel导出
  * @create 2019-01-22 14:40
  */
+@Slf4j
 public class DefaultExcelExportHandler<T> implements ListExportHandler<T> {
 
-    private ConcurrentHashMap<String, SheetWriter> sheetWriterMap;
+    private ConcurrentHashMap<String, BaseSheetWriter> sheetWriterMap;
 
     private ExcelConfiguration configuration;
 
@@ -38,12 +38,12 @@ public class DefaultExcelExportHandler<T> implements ListExportHandler<T> {
             Field field = configuration.getCls().getDeclaredField(pagingColumn);
             Consumer<T> consumer = (t) -> {
                 String sheetName = pagingColumn + "-" + ReflectUtil.getValueFromField(field, t);
-                SheetWriter<T> sheetWriter = sheetWriterMap.get(sheetName);
+                BaseSheetWriter sheetWriter = sheetWriterMap.get(sheetName);
                 if(sheetWriter == null){
-                    sheetWriter = new BaseSheetWriter<>(configuration)
+                    sheetWriter = new BeanSheetWriter(sheetName, configuration);
                     sheetWriterMap.put(sheetName, sheetWriter);
                 }
-                sheetWriter.writeRow(t, getCellStyle());
+                sheetWriter.writeRow(t);
             };
             beanList.forEach(consumer);
 

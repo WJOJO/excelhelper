@@ -2,6 +2,8 @@ package excelhelper.base.config;
 
 import excelhelper.annotations.ExcelColumn;
 import excelhelper.annotations.ExcelTable;
+import excelhelper.base.exp.core.DataInterceptor;
+import excelhelper.base.intercepter.Convertor;
 import excelhelper.util.comparator.AnnotationTreeMapComparator;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -58,6 +60,15 @@ public class ExcelConfiguration {
      * 工作空间
      */
     private Workbook workbook;
+
+    /**
+     * 数据转换拦截器，处理list
+     */
+    private DataInterceptor dataInterceptor;
+    /**
+     * bean的转换器，处理bean
+     */
+    private Convertor convertor;
 
 
     public ExcelConfiguration(Class<?> cls){
@@ -203,5 +214,21 @@ public class ExcelConfiguration {
 
     public void setWorkbook(Workbook workbook) {
         this.workbook = workbook;
+    }
+
+    public DataInterceptor getDataInterceptor() {
+        return dataInterceptor;
+    }
+
+    public void setDataInterceptor(DataInterceptor dataInterceptor) {
+        this.dataInterceptor = dataInterceptor;
+    }
+
+    public Convertor getConvertor() {
+        return convertor;
+    }
+
+    public void setConvertor(Convertor convertor) {
+        this.convertor = convertor;
     }
 }
