@@ -1,7 +1,7 @@
 package excelhelper.base.exp.excel;
 
 
-import excelhelper.base.config.ExcelConfiguration;
+import excelhelper.base.configuration.ExcelConfiguration;
 import excelhelper.base.exp.SheetWriter;
 import excelhelper.base.intercepter.Convertor;
 import excelhelper.util.ReflectUtil;

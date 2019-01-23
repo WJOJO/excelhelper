@@ -1,6 +1,6 @@
 package excelhelper.base.exp.excel;
 
-import excelhelper.base.config.ExcelConfiguration;
+import excelhelper.base.configuration.ExcelConfiguration;
 import excelhelper.base.constants.WorkbookType;
 import excelhelper.base.exp.ListExportHandler;
 import excelhelper.base.exp.SheetWriter;

@@ -1,14 +1,25 @@
-package excelhelper.base.config;
+package excelhelper.base.configuration;
 
 import excelhelper.annotations.ExcelColumn;
 import excelhelper.annotations.ExcelTable;
-import excelhelper.base.exp.core.DataInterceptor;
+import excelhelper.base.constants.WorkbookType;
+import excelhelper.base.exception.InitialException;
+import excelhelper.base.exp.paging.PropertyPaging;
+import excelhelper.base.intercepter.DataHandler;
+import excelhelper.base.exp.paging.Paging;
 import excelhelper.base.intercepter.Convertor;
+import excelhelper.base.intercepter.Interceptor;
 import excelhelper.util.comparator.AnnotationTreeMapComparator;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -22,6 +33,17 @@ public class ExcelConfiguration {
      * 类对象
      */
     private Class<?> cls;
+
+    /**
+     * 分页属性
+     */
+    private Field pagingField;
+
+    /**
+     * 分页处理器
+     */
+    private Paging pagingHandler;
+
     /**
      *  类的表格注解
      */
@@ -64,15 +86,17 @@ public class ExcelConfiguration {
     /**
      * 数据转换拦截器，处理list
      */
-    private DataInterceptor dataInterceptor;
+    private DataHandler dataHandler;
     /**
      * bean的转换器，处理bean
      */
-    private Convertor convertor;
+    private Interceptor beanIntercepter;
+
+
 
 
     public ExcelConfiguration(Class<?> cls){
-        this(cls, null);
+        this(cls, -1);
     }
 
     public ExcelConfiguration(Class<?> cls, Integer group){
@@ -82,8 +106,52 @@ public class ExcelConfiguration {
         }
         this.excelTable = cls.getAnnotation(ExcelTable.class);
         this.group = group;
+
+        initPaging();
+        initWorkBook();
+        initIntercepter();
         initAnnotationTreeMap();
         initColumnTitles();
+    }
+
+    /**
+     * @Description: 初始化分sheet的属性
+     * @Author: Javon Wang
+     * @Date: 2019/1/23
+     * @Time: 14:23
+     */
+    private void initPaging(){
+        String[] pagingColumns = this.excelTable.pagingColumn();
+        if(pagingColumns.length == 0){
+            this.pagingField = null;
+            return;
+        } else{
+            try {
+                this.pagingField = this.cls.getDeclaredField(pagingColumns[group < 0?0:group]);
+                this.pagingHandler = new PropertyPaging(this);
+            } catch (NoSuchFieldException e) {
+                throw new InitialException("分组第" + group + "组,分页属性" + pagingColumns[group]+"不存在！",e);
+            }
+        }
+
+    }
+
+    /**
+     * @Description: 初始化list和bean的转换拦截器
+     * @Author: Javon Wang
+     * @Date: 2019/1/23
+     * @Time: 13:48
+     */    
+    private void initIntercepter() throws InitialException{
+        //初始化拦截器
+        try {
+            Constructor<? extends Interceptor> constructor = excelTable.beanIntercepter().getConstructor();
+            this.beanIntercepter = constructor.newInstance();
+
+            this.dataHandler = excelTable.listHandler().getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new InitialException("构造beanlist拦截器失败", e);
+        }
     }
 
 
@@ -115,7 +183,7 @@ public class ExcelConfiguration {
             if (object.isAnnotationPresent(ExcelColumn.class)) {
                 ExcelColumn excelColumn = object.getAnnotation(ExcelColumn.class);
                 //未指定group
-                if(this.group == null){
+                if(this.group == -1){
                     annotationTreeMap.put(excelColumn, object);
                 }else{
                     //已指定group
@@ -142,6 +210,29 @@ public class ExcelConfiguration {
         while(iterator.hasNext()){
             columnNameList.add(iterator.next().title());
         }
+    }
+
+    /**
+     * @Description: 根据注解的workbooktype初始化workbook
+     * @Author: Javon Wang
+     * @Date: 2019/1/4
+     * @Time: 14:13
+     */
+    private void initWorkBook(){
+        System.out.println("初始化workbook");
+        WorkbookType workbookType = excelTable.workbookType();
+        switch (workbookType){
+            case XSSF:
+                this.workbook = new XSSFWorkbook();
+                break;
+            case HSSF:
+                this.workbook = new HSSFWorkbook();
+                break;
+            case SXSSF:
+                this.workbook = new SXSSFWorkbook(1000);
+                break;
+        }
+
     }
 
     public Class<?> getCls() {
@@ -216,19 +307,36 @@ public class ExcelConfiguration {
         this.workbook = workbook;
     }
 
-    public DataInterceptor getDataInterceptor() {
-        return dataInterceptor;
+    public DataHandler getDataHandler() {
+        return dataHandler;
     }
 
-    public void setDataInterceptor(DataInterceptor dataInterceptor) {
-        this.dataInterceptor = dataInterceptor;
+    public void setDataHandler(DataHandler dataHandler) {
+        this.dataHandler = dataHandler;
     }
 
-    public Convertor getConvertor() {
-        return convertor;
+
+    public Field getPagingField() {
+        return pagingField;
     }
 
-    public void setConvertor(Convertor convertor) {
-        this.convertor = convertor;
+    public void setPagingField(Field pagingField) {
+        this.pagingField = pagingField;
+    }
+
+    public Paging getPagingHandler() {
+        return pagingHandler;
+    }
+
+    public void setPagingHandler(Paging pagingHandler) {
+        this.pagingHandler = pagingHandler;
+    }
+
+    public Interceptor getBeanIntercepter() {
+        return beanIntercepter;
+    }
+
+    public void setBeanIntercepter(Interceptor beanIntercepter) {
+        this.beanIntercepter = beanIntercepter;
     }
 }

@@ -7,6 +7,22 @@ package excelhelper.base.exception;
  */
 public class InitialException extends RuntimeException {
 
-    private RuntimeException e;
+    public InitialException() {
+    }
 
+    public InitialException(String message) {
+        super(message);
+    }
+
+    public InitialException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public InitialException(Throwable cause) {
+        super(cause);
+    }
+
+    public InitialException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

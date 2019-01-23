@@ -1,7 +1,7 @@
-package excelhelper.base.exp.core;
+package excelhelper.base.exp.core.sheet;
 
 import excelhelper.annotations.ExcelColumn;
-import excelhelper.base.config.ExcelConfiguration;
+import excelhelper.base.configuration.ExcelConfiguration;
 import excelhelper.util.ReflectUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -82,9 +82,10 @@ public class BeanSheetWriter<T> implements BaseSheetWriter<T>{
 
     @Override
     public void writeData(List<T> beanList){
-        configuration.getDataInterceptor().translate(beanList).parallelStream()
-                .peek(bean -> configuration.getConvertor().convert(bean))
-                .parallel().forEach(this::writeRow);
+        ((List<T>)configuration.getDataHandler().handle(beanList))
+                .parallelStream()
+                .peek(bean -> configuration.getBeanIntercepter().translate(bean))
+                .forEach(this::writeRow);
     }
 
     @Override

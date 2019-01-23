@@ -1,8 +1,11 @@
 package excelhelper.annotations;
 
 import excelhelper.base.constants.WorkbookType;
+import excelhelper.base.intercepter.BeanIntercepter;
+import excelhelper.base.intercepter.DataHandler;
+import excelhelper.base.intercepter.Interceptor;
+import excelhelper.base.intercepter.ListDataHandler;
 
-import javax.xml.bind.Element;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -40,5 +43,17 @@ public @interface ExcelTable {
      * 分页字段 对应顺序 group1 group2 group3
      */
     String[] pagingColumn() default {};
+
+    /**
+     * beanlist处理器
+     * @return
+     */
+    Class<? extends DataHandler> listHandler() default ListDataHandler.class;
+
+    /**
+     * bean翻译的拦截器
+     * @return
+     */
+    Class<? extends Interceptor> beanIntercepter() default BeanIntercepter.class;
 
 }
