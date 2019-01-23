@@ -29,13 +29,14 @@ public class PropertyPaging<E> implements Paging<E> {
         if(!pagingField.isAccessible()){
             pagingField.setAccessible(true);
         }
-        beanList.stream().forEach(e -> {
+        for (E e :
+                beanList) {
             try {
                 String value = String.valueOf(pagingField.get(e));
                 value = fieldName + "_" + value;
-                if(map.containsKey(value)){
+                if (map.containsKey(value)) {
                     map.get(value).add(e);
-                }else {
+                } else {
                     ArrayList<E> list = new ArrayList<>();
                     list.add(e);
                     map.put(value, list);
@@ -43,7 +44,7 @@ public class PropertyPaging<E> implements Paging<E> {
             } catch (IllegalAccessException e1) {
                 e1.printStackTrace();
             }
-        });
+        }
         return map;
     }
 }

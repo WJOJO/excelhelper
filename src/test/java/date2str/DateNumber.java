@@ -24,9 +24,6 @@ public class DateNumber {
 ////        }
 
         Method[] declaredMethods = DateNumber.class.getDeclaredMethods();
-        Arrays.stream(declaredMethods).forEach(method -> {
-            System.out.print(method.getReturnType().getSimpleName() + "  ");
-            System.out.println(method.getName());
-        });
+
     }
 }

@@ -6,10 +6,9 @@ import excelhelper.base.constants.CellStyleType;
 import excelhelper.base.constants.WorkbookType;
 import excelhelper.base.exception.InitialException;
 import excelhelper.base.exp.paging.NonPaging;
+import excelhelper.base.exp.paging.Paging;
 import excelhelper.base.exp.paging.PropertyPaging;
 import excelhelper.base.intercepter.DataHandler;
-import excelhelper.base.exp.paging.Paging;
-import excelhelper.base.intercepter.Convertor;
 import excelhelper.base.intercepter.Interceptor;
 import excelhelper.util.comparator.AnnotationTreeMapComparator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -21,13 +20,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
+ * excel导出配置信息
  * @author Javon Wang
- * @description excel导出配置信息
- * @create 2019-01-09 15:59
+ * @since  2019-01-09 15:59
  */
 public class ExcelConfiguration {
 
@@ -203,7 +201,7 @@ public class ExcelConfiguration {
                     annotationTreeMap.put(excelColumn, object);
                 }else{
                     //已指定group
-                    if(Arrays.stream(excelColumn.groups()).anyMatch((e) -> e == this.group)){
+                    if(Arrays.asList(excelColumn.groups()).contains(this.group)){
                         annotationTreeMap.put(excelColumn, object);
                     }
                 }

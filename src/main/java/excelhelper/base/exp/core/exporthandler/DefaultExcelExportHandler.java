@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,10 +42,14 @@ public class DefaultExcelExportHandler<T> implements ListExportHandler<T> {
         beanList = listSorted(beanList);
         Paging pagingHandler = configuration.getPagingHandler();
         Map<String, List<T>> map = pagingHandler.paging(beanList);
-        map.entrySet().iterator().forEachRemaining(stringListEntry -> {
-            BaseSheetWriter<T> beanSheetWriter = null;
+
+        Iterator<Map.Entry<String, List<T>>> iterator = map.entrySet().iterator();
+        BaseSheetWriter<T> beanSheetWriter;
+        while(iterator.hasNext()){
+            Map.Entry<String, List<T>> stringListEntry = iterator.next();
             String key = stringListEntry.getKey();
             List<T> value = stringListEntry.getValue();
+
             if (null == sheetWriterMap.get(key)) {
                 beanSheetWriter = new BeanSheetWriter<>(key, configuration);
                 sheetWriterMap.put(key, beanSheetWriter);
@@ -52,7 +57,7 @@ public class DefaultExcelExportHandler<T> implements ListExportHandler<T> {
                 beanSheetWriter = sheetWriterMap.get(key);
             }
             beanSheetWriter.writeData(value);
-        });
+        }
     }
 
     @Override

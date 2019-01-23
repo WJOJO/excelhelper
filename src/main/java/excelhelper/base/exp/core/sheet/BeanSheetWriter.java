@@ -2,6 +2,7 @@ package excelhelper.base.exp.core.sheet;
 
 import excelhelper.annotations.ExcelColumn;
 import excelhelper.base.configuration.ExcelConfiguration;
+import excelhelper.base.intercepter.DataHandler;
 import excelhelper.util.ReflectUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -71,21 +72,25 @@ public class BeanSheetWriter<T> implements BaseSheetWriter<T>{
      */
     private void createColumnTitle(){
         Row row = sheet.createRow(rowNum++);
-        configuration.getColumnNameList().forEach(title -> {
+        List<String> columnNameList = configuration.getColumnNameList();
+        for (String title :
+                columnNameList) {
             Cell cell = row.createCell(columnNum++);
             cell.setCellStyle(configuration.getColumnTitleCellStyle());
             cell.setCellValue(title);
-        });
+        }
         columnNum = 0;
     }
 
 
     @Override
     public void writeData(List<T> beanList){
-        ((List<T>)configuration.getDataHandler().handle(beanList))
-                .stream()
-                .peek(bean -> configuration.getBeanIntercepter().translate(bean))
-                .forEach(this::writeRow);
+        beanList = (List<T>)configuration.getDataHandler().handle(beanList);
+        for (T bean :
+                beanList) {
+            bean = (T)configuration.getBeanIntercepter().translate(bean);
+            writeRow(bean);
+        }
     }
 
     @Override

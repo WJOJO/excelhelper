@@ -57,9 +57,11 @@ public class SheetWriter<T> {
      * @Time: 14:38
      */
     public void write(List<T> beanList, CellStyle cellStyle){
-        beanList.forEach(t -> {
+        for (T t :
+                beanList) {
             writeRow(convertor.convert(t), cellStyle);
-        });
+        }
+
     }
     /**
      * @Description: sheet中写入bean
@@ -129,11 +131,12 @@ public class SheetWriter<T> {
      */
     public void createColumnTitle(List<String> columnTitles, CellStyle cellStyle){
         Row row = sheet.createRow(rowNum++);
-        columnTitles.forEach(title -> {
+        for (String title :
+                columnTitles) {
             Cell cell = row.createCell(columnNum++);
             cell.setCellStyle(cellStyle);
             cell.setCellValue(title);
-        });
+        }
         columnNum = 0;
     }
 

@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * @author Administrator
@@ -110,23 +109,26 @@ public class ReflectUtil {
     public static List<Object[]> getAnnotations(Class<?> cls){
         List<Object[]> annotationList = new ArrayList<>();
         Field[] fields = cls.getDeclaredFields();
-        Arrays.stream(fields).filter(field ->
-            field.isAnnotationPresent(ExcelColumn.class)
-        ).forEach(field ->
-            annotationList.add(new Object[]{field.getAnnotation(ExcelColumn.class), field})
-        );
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i].isAnnotationPresent(ExcelColumn.class)){
+                annotationList.add(new Object[]{fields[i].getAnnotation(ExcelColumn.class), fields[i]});
+            }
+        }
 
         Method[] methods = cls.getDeclaredMethods();
-        Arrays.stream(methods).filter(method ->
-             method.isAnnotationPresent(ExcelColumn.class)
-        ).forEach(method ->
-            annotationList.add(new Object[]{method.getAnnotation(ExcelColumn.class), method})
-        );
+        for (int i = 0; i < methods.length; i++) {
+            if (methods[i].isAnnotationPresent(ExcelColumn.class)){
+                annotationList.add(new Object[]{methods[i].getAnnotation(ExcelColumn.class), methods[i]});
+            }
+        }
 
-        return annotationList.stream().sorted(((o1, o2) -> {
-            return ((ExcelColumn)o1[0]).sort() - ((ExcelColumn)o2[0]).sort();
-        })).collect(Collectors.toList());
-
+        Collections.sort(annotationList, new Comparator<Object[]>() {
+            @Override
+            public int compare(Object[] o1, Object[] o2) {
+                return ((ExcelColumn)o1[0]).sort() - ((ExcelColumn)o2[0]).sort();
+            }
+        });
+        return annotationList;
     }
 
 }

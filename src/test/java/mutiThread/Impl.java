@@ -11,10 +11,7 @@ public class Impl {
 
     @Test
     public void testInterface(){
-        HoldInterface holdInterface = new HoldInterface(() -> System.out.println("hello创建接口对象"));
-        holdInterface.start();
 
-        holdInterface.anInterface.println();
     }
 
 

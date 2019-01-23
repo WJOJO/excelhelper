@@ -10,16 +10,7 @@ import org.junit.Test;
 public class TestThread {
 
     public void testRun(final int length, final Thread mainThread){
-        new Thread(()-> {
-            try {
-                System.out.println("线程开始等待");
-                Thread.sleep(100);
-                System.out.println("main线程是否存活：" + mainThread.isAlive());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println("第一个线程处理数字长度" + length);
-        }).start();
+
 
     }
 

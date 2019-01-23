@@ -9,7 +9,5 @@ public interface Interface {
 
     void print();
 
-    default void println(){
-        System.out.println("调用default方法");
-    }
+
 }

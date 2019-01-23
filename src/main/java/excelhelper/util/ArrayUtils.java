@@ -21,7 +21,11 @@ public class ArrayUtils {
         if(isEmpty(array)){
             return false;
         }
-        return Arrays.stream(array).anyMatch((e) -> e == t || e.equals(t));
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == t || array[i].equals(t))
+                return true;
+        }
+        return false;
     }
 
     /**

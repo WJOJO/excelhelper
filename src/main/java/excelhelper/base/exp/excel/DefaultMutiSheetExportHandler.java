@@ -11,7 +11,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * @author Javon Wang
@@ -40,17 +39,16 @@ public class DefaultMutiSheetExportHandler<T> extends List2ExcelExportHandler<T>
         String pagingColumn = excelConfig.getExcelTable().pagingColumn()[excelConfig.getGroup()-1];
         try {
             Field field = excelConfig.getCls().getDeclaredField(pagingColumn);
-            Consumer<T> consumer = (t) -> {
+            for (T t :
+                    beanList) {
                 String sheetName = pagingColumn + "-" + ReflectUtil.getValueFromField(field, t);
-                SheetWriter<T> sheetWriter = sheetWriterMap.get(sheetName);
-                if(sheetWriter == null){
+                SheetWriter sheetWriter = sheetWriterMap.get(sheetName);
+                if (sheetWriter == null) {
                     sheetWriter = prepareSheetWriter(convertor, sheetName);
                     sheetWriterMap.put(sheetName, sheetWriter);
                 }
                 sheetWriter.writeRow(t, getCellStyle());
-            };
-            beanList.forEach(consumer);
-
+            }
         } catch (NoSuchFieldException e) {
             log.error("找不到用来分页的属性");
         }
