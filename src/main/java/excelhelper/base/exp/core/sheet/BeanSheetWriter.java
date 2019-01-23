@@ -83,7 +83,7 @@ public class BeanSheetWriter<T> implements BaseSheetWriter<T>{
     @Override
     public void writeData(List<T> beanList){
         ((List<T>)configuration.getDataHandler().handle(beanList))
-                .parallelStream()
+                .stream()
                 .peek(bean -> configuration.getBeanIntercepter().translate(bean))
                 .forEach(this::writeRow);
     }

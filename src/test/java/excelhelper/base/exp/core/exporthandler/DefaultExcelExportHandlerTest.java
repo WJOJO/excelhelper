@@ -30,10 +30,13 @@ public class DefaultExcelExportHandlerTest {
 
     @Test
     public void writeList() {
+        long start = System.currentTimeMillis();
         ExcelConfiguration excelConfiguration = ConfigurationBuilder.build(User.class);
         DefaultExcelExportHandler<User> handler = new DefaultExcelExportHandler<>(excelConfiguration);
         handler.writeList(users);
         handler.writeFile("D://temp//DefaultExcelExportHandler.xlsx");
+        long end = System.currentTimeMillis();
+        System.out.println("耗时：" + (end - start) + "ms");
 
     }
 }

@@ -15,10 +15,14 @@ public class NonPaging<E> implements Paging<E> {
 
     ExcelConfiguration configuration;
 
+    public NonPaging(ExcelConfiguration configuration){
+        this.configuration = configuration;
+    }
+
     @Override
     public Map<String, List<E>> paging(List<E> beanList) {
         Map<String, List<E>> map = new HashMap<>();
-        map.put(configuration.getPagingField().getName(), beanList);
+        map.put(configuration.getExcelTable().sheetName(), beanList);
         return map;
     }
 }

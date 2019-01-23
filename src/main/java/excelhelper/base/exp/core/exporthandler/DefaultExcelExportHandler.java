@@ -45,13 +45,11 @@ public class DefaultExcelExportHandler<T> implements ListExportHandler<T> {
             BaseSheetWriter<T> beanSheetWriter = null;
             String key = stringListEntry.getKey();
             List<T> value = stringListEntry.getValue();
-            synchronized (sheetWriterMap) {
-                if (null == sheetWriterMap.get(key)) {
-                    beanSheetWriter = new BeanSheetWriter<>(key, configuration);
-                    sheetWriterMap.put(key, beanSheetWriter);
-                } else {
-                    beanSheetWriter = sheetWriterMap.get(key);
-                }
+            if (null == sheetWriterMap.get(key)) {
+                beanSheetWriter = new BeanSheetWriter<>(key, configuration);
+                sheetWriterMap.put(key, beanSheetWriter);
+            } else {
+                beanSheetWriter = sheetWriterMap.get(key);
             }
             beanSheetWriter.writeData(value);
         });

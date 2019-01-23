@@ -2,8 +2,10 @@ package excelhelper.base.configuration;
 
 import excelhelper.annotations.ExcelColumn;
 import excelhelper.annotations.ExcelTable;
+import excelhelper.base.constants.CellStyleType;
 import excelhelper.base.constants.WorkbookType;
 import excelhelper.base.exception.InitialException;
+import excelhelper.base.exp.paging.NonPaging;
 import excelhelper.base.exp.paging.PropertyPaging;
 import excelhelper.base.intercepter.DataHandler;
 import excelhelper.base.exp.paging.Paging;
@@ -92,6 +94,11 @@ public class ExcelConfiguration {
      */
     private Interceptor beanIntercepter;
 
+    /**
+     * 存放所有类型的cellstyle
+     */
+    private Map<CellStyleType, CellStyle> cellStyleMap;
+
 
 
 
@@ -112,6 +119,14 @@ public class ExcelConfiguration {
         initIntercepter();
         initAnnotationTreeMap();
         initColumnTitles();
+        initCellStyleMap();
+    }
+
+    private void initCellStyleMap(){
+        this.cellStyleMap = new HashMap<>();
+        this.cellStyleMap.put(CellStyleType.CELL, this.workbook.createCellStyle());
+        this.cellStyleMap.put(CellStyleType.COLUMNNAME, this.workbook.createCellStyle());
+        this.cellStyleMap.put(CellStyleType.TITLE, this.workbook.createCellStyle());
     }
 
     /**
@@ -124,6 +139,7 @@ public class ExcelConfiguration {
         String[] pagingColumns = this.excelTable.pagingColumn();
         if(pagingColumns.length == 0){
             this.pagingField = null;
+            this.pagingHandler = new NonPaging(this);
             return;
         } else{
             try {
