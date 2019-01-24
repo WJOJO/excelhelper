@@ -1,8 +1,8 @@
-package excelhelper.base.exp.core.sheet;
+package excelhelper.base.exp.core.writer;
 
 import excelhelper.annotations.ExcelColumn;
 import excelhelper.base.configuration.ExcelConfiguration;
-import excelhelper.base.intercepter.DataHandler;
+import excelhelper.base.constants.CellStyleType;
 import excelhelper.util.ReflectUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,7 +21,7 @@ import java.util.Map;
  * @description bean导出excel
  * @create 2019-01-22 13:54
  */
-public class BeanSheetWriter<T> implements BaseSheetWriter<T>{
+public class BeanSheetWriter<T> implements BaseWriter<T> {
 
     private final Sheet sheet;
 
@@ -57,7 +57,7 @@ public class BeanSheetWriter<T> implements BaseSheetWriter<T>{
         header.setHeightInPoints(20);
         Cell cell = header.createCell(0);
         cell.setCellValue(configuration.getExcelTable().tableName());
-        cell.setCellStyle(configuration.getTableNameCellStyle());
+        cell.setCellStyle(configuration.getCellStyleMap().get(CellStyleType.TITLE));
         sheet.addMergedRegion(
                 new CellRangeAddress(0, 0,
                         0, configuration.getColumnNameList().size() - 1 ));
@@ -76,7 +76,7 @@ public class BeanSheetWriter<T> implements BaseSheetWriter<T>{
         for (String title :
                 columnNameList) {
             Cell cell = row.createCell(columnNum++);
-            cell.setCellStyle(configuration.getColumnTitleCellStyle());
+            cell.setCellStyle(configuration.getCellStyleMap().get(CellStyleType.COLUMNNAME));
             cell.setCellValue(title);
         }
         columnNum = 0;
@@ -101,9 +101,7 @@ public class BeanSheetWriter<T> implements BaseSheetWriter<T>{
         while(iterator.hasNext()){
             Map.Entry<ExcelColumn, AccessibleObject> annoKey = iterator.next();
             Cell cell = row.createCell(columnNum ++);
-            if(configuration.getCellStyle() != null){
-                cell.setCellStyle(configuration.getCellStyle());
-            }
+            cell.setCellStyle(configuration.getCellStyleMap().get(CellStyleType.CELL));
             String value = "";
             AccessibleObject fieldOrMethod = annoKey.getValue();
             if (fieldOrMethod instanceof Field) {

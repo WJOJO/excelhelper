@@ -1,4 +1,4 @@
-package excelhelper.base.exp.core.sheet;
+package excelhelper.base.exp.core.writer;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import java.util.List;
  * @description sheet接口
  * @create 2019-01-22 14:38
  */
-public interface BaseSheetWriter<T> {
+public interface BaseWriter<T> {
 
     void writeData(List<T> beanList);
 

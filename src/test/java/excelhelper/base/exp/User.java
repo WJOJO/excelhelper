@@ -88,4 +88,34 @@ public class User implements Cloneable{
     protected Object clone() throws CloneNotSupportedException {
         return new User(name, age);
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", age1=" + age1 +
+                ", age2=" + age2 +
+                ", age3=" + age3 +
+                ", age4=" + age4 +
+                ", age5=" + age5 +
+                ", age6=" + age6 +
+                ", age7=" + age7 +
+                ", age8=" + age8 +
+                ", age9=" + age9 +
+                ", age10=" + age10 +
+                ", age11=" + age11 +
+                ", age12=" + age12 +
+                ", age13=" + age13 +
+                ", age14=" + age14 +
+                ", age15=" + age15 +
+                ", age16=" + age16 +
+                ", age17=" + age17 +
+                ", age18=" + age18 +
+                ", age19=" + age19 +
+                ", age20=" + age20 +
+                ", age21=" + age21 +
+                ", age22=" + age22 +
+                '}';
+    }
 }

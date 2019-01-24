@@ -13,6 +13,8 @@ import excelhelper.base.intercepter.Interceptor;
 import excelhelper.util.comparator.AnnotationTreeMapComparator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -64,18 +66,6 @@ public class ExcelConfiguration {
      * 导出组
      */
     private Integer group;
-    /**
-     * 合并表格名称的单元格样式
-     */
-    private CellStyle tableNameCellStyle;
-    /**
-     * 列头样式
-     */
-    private CellStyle columnTitleCellStyle;
-    /**
-     * 单元格样式
-     */
-    private CellStyle cellStyle;
 
 
     /**
@@ -98,12 +88,6 @@ public class ExcelConfiguration {
     private Map<CellStyleType, CellStyle> cellStyleMap;
 
 
-
-
-    public ExcelConfiguration(Class<?> cls){
-        this(cls, -1);
-    }
-
     public ExcelConfiguration(Class<?> cls, Integer group){
         this.cls = cls;
         if( ! cls.isAnnotationPresent(ExcelTable.class)){
@@ -122,9 +106,19 @@ public class ExcelConfiguration {
 
     private void initCellStyleMap(){
         this.cellStyleMap = new HashMap<>();
+        CellStyle tableNameStyle = this.workbook.createCellStyle();
+        tableNameStyle.setAlignment(HorizontalAlignment.CENTER);
+        Font tableFont = this.workbook.createFont();
+        tableFont.setFontName("Arial");
+        tableFont.setFontHeight((short)16);
+        tableFont.setBold(true);
+        tableNameStyle.setFont(tableFont);
+        this.cellStyleMap.put(CellStyleType.TITLE, tableNameStyle);
+
+        CellStyle columnNameStyle = this.workbook.createCellStyle();
+
         this.cellStyleMap.put(CellStyleType.CELL, this.workbook.createCellStyle());
         this.cellStyleMap.put(CellStyleType.COLUMNNAME, this.workbook.createCellStyle());
-        this.cellStyleMap.put(CellStyleType.TITLE, this.workbook.createCellStyle());
     }
 
     /**
@@ -138,7 +132,6 @@ public class ExcelConfiguration {
         if(pagingColumns.length == 0){
             this.pagingField = null;
             this.pagingHandler = new NonPaging(this);
-            return;
         } else{
             try {
                 this.pagingField = this.cls.getDeclaredField(pagingColumns[group < 0?0:group]);
@@ -175,13 +168,12 @@ public class ExcelConfiguration {
      * @Date: 2019/1/4
      * @Time: 14:15
      */
-    private boolean initAnnotationTreeMap(){
+    private void initAnnotationTreeMap(){
         AccessibleObject[] declaredFieldsOrMethods = this.cls.getDeclaredFields();
         add2AnnoTreeMap(declaredFieldsOrMethods);
 
         declaredFieldsOrMethods = this.cls.getDeclaredMethods();
         add2AnnoTreeMap(declaredFieldsOrMethods);
-        return annotationTreeMap.size() > 0;
     }
 
     /**
@@ -191,7 +183,6 @@ public class ExcelConfiguration {
      * @Time: 16:31
      */
     private void add2AnnoTreeMap(AccessibleObject[] accessibleObjects){
-
         for (AccessibleObject object :
                 accessibleObjects) {
             if (object.isAnnotationPresent(ExcelColumn.class)) {
@@ -289,30 +280,6 @@ public class ExcelConfiguration {
         this.group = group;
     }
 
-    public CellStyle getTableNameCellStyle() {
-        return tableNameCellStyle;
-    }
-
-    public void setTableNameCellStyle(CellStyle tableNameCellStyle) {
-        this.tableNameCellStyle = tableNameCellStyle;
-    }
-
-    public CellStyle getColumnTitleCellStyle() {
-        return columnTitleCellStyle;
-    }
-
-    public void setColumnTitleCellStyle(CellStyle columnTitleCellStyle) {
-        this.columnTitleCellStyle = columnTitleCellStyle;
-    }
-
-    public CellStyle getCellStyle() {
-        return cellStyle;
-    }
-
-    public void setCellStyle(CellStyle cellStyle) {
-        this.cellStyle = cellStyle;
-    }
-
     public Workbook getWorkbook() {
         return workbook;
     }
@@ -352,5 +319,13 @@ public class ExcelConfiguration {
 
     public void setBeanIntercepter(Interceptor beanIntercepter) {
         this.beanIntercepter = beanIntercepter;
+    }
+
+    public Map<CellStyleType, CellStyle> getCellStyleMap() {
+        return cellStyleMap;
+    }
+
+    public void setCellStyleMap(Map<CellStyleType, CellStyle> cellStyleMap) {
+        this.cellStyleMap = cellStyleMap;
     }
 }

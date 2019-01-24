@@ -2,8 +2,8 @@ package excelhelper.base.exp.core.exporthandler;
 
 import excelhelper.base.configuration.ExcelConfiguration;
 import excelhelper.base.exp.ListExportHandler;
-import excelhelper.base.exp.core.sheet.BaseSheetWriter;
-import excelhelper.base.exp.core.sheet.BeanSheetWriter;
+import excelhelper.base.exp.core.writer.BaseWriter;
+import excelhelper.base.exp.core.writer.BeanSheetWriter;
 import excelhelper.base.exp.paging.Paging;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,12 +23,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class DefaultExcelExportHandler<T> implements ListExportHandler<T> {
 
-    private ConcurrentHashMap<String, BaseSheetWriter> sheetWriterMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, BaseWriter> sheetWriterMap = new ConcurrentHashMap<>();
 
     private ExcelConfiguration configuration;
 
 
-    DefaultExcelExportHandler(ExcelConfiguration configuration){
+    public DefaultExcelExportHandler(ExcelConfiguration configuration){
         this.configuration = configuration;
     }
 
@@ -44,7 +44,7 @@ public class DefaultExcelExportHandler<T> implements ListExportHandler<T> {
         Map<String, List<T>> map = pagingHandler.paging(beanList);
 
         Iterator<Map.Entry<String, List<T>>> iterator = map.entrySet().iterator();
-        BaseSheetWriter<T> beanSheetWriter;
+        BaseWriter<T> beanSheetWriter;
         while(iterator.hasNext()){
             Map.Entry<String, List<T>> stringListEntry = iterator.next();
             String key = stringListEntry.getKey();
