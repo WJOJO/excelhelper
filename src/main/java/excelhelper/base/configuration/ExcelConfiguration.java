@@ -3,14 +3,15 @@ package excelhelper.base.configuration;
 import excelhelper.annotations.ExcelColumn;
 import excelhelper.annotations.ExcelTable;
 import excelhelper.base.constants.CellStyleType;
-import excelhelper.base.constants.WorkbookType;
+import excelhelper.base.constants.WorkbookTypeEnum;
 import excelhelper.base.exception.InitialException;
-import excelhelper.base.exp.paging.NonPaging;
-import excelhelper.base.exp.paging.Paging;
-import excelhelper.base.exp.paging.PropertyPaging;
+import excelhelper.base.exp.paging.NonPagingHandler;
+import excelhelper.base.exp.paging.PagingHandler;
+import excelhelper.base.exp.paging.PropertyPagingHandler;
 import excelhelper.base.intercepter.DataHandler;
 import excelhelper.base.intercepter.Interceptor;
 import excelhelper.util.comparator.AnnotationTreeMapComparator;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -29,12 +30,18 @@ import java.util.*;
  * @author Javon Wang
  * @since  2019-01-09 15:59
  */
+@Slf4j
 public class ExcelConfiguration {
 
     /**
      * 类对象
      */
     private Class<?> cls;
+
+    /**
+     * 是否导出 true为导出  false为导入
+     */
+    private boolean isExport;
 
     /**
      * 分页属性
@@ -44,7 +51,7 @@ public class ExcelConfiguration {
     /**
      * 分页处理器
      */
-    private Paging pagingHandler;
+    private PagingHandler pagingHandler;
 
     /**
      *  类的表格注解
@@ -67,7 +74,6 @@ public class ExcelConfiguration {
      */
     private Integer group;
 
-
     /**
      * 工作空间
      */
@@ -88,14 +94,14 @@ public class ExcelConfiguration {
     private Map<CellStyleType, CellStyle> cellStyleMap;
 
 
-    public ExcelConfiguration(Class<?> cls, Integer group){
+    public ExcelConfiguration(Class<?> cls, Integer group, boolean isExport){
         this.cls = cls;
         if( ! cls.isAnnotationPresent(ExcelTable.class)){
             throw new RuntimeException("无注解，初始化失败");
         }
         this.excelTable = cls.getAnnotation(ExcelTable.class);
         this.group = group;
-
+        this.isExport = isExport;
         initPaging();
         initWorkBook();
         initIntercepter();
@@ -128,17 +134,23 @@ public class ExcelConfiguration {
      * @Time: 14:23
      */
     private void initPaging(){
+        int index = 0;
         String[] pagingColumns = this.excelTable.pagingColumn();
-        if(pagingColumns.length == 0){
-            this.pagingField = null;
-            this.pagingHandler = new NonPaging(this);
-        } else{
-            try {
-                this.pagingField = this.cls.getDeclaredField(pagingColumns[group < 0?0:group]);
-                this.pagingHandler = new PropertyPaging(this);
-            } catch (NoSuchFieldException e) {
-                throw new InitialException("分组第" + group + "组,分页属性" + pagingColumns[group]+"不存在！",e);
+        try {
+            if(pagingColumns.length == 0){
+                this.pagingField = null;
+                this.pagingHandler = new NonPagingHandler(this);
+                return; // 直接返回
+            } else if(this.group > pagingColumns.length){
+                log.info("分页导出的字段 与 分组不一致, 使用第一个分页的属性值进行分页");
+                index = 0;
+            } else{
+                index = this.group <= 0?0:this.group - 1;
             }
+            this.pagingField = this.cls.getDeclaredField(pagingColumns[index]);
+            this.pagingHandler = new PropertyPagingHandler(this);
+        } catch (NoSuchFieldException e) {
+            throw new InitialException("分组第" + group + "组,分页属性" + pagingColumns[group]+"不存在！",e);
         }
 
     }
@@ -185,18 +197,32 @@ public class ExcelConfiguration {
     private void add2AnnoTreeMap(AccessibleObject[] accessibleObjects){
         for (AccessibleObject object :
                 accessibleObjects) {
-            if (object.isAnnotationPresent(ExcelColumn.class)) {
-                ExcelColumn excelColumn = object.getAnnotation(ExcelColumn.class);
-                //未指定group
-                if(this.group == -1){
-                    annotationTreeMap.put(excelColumn, object);
-                }else{
-                    //已指定group
-                    if(Arrays.asList(excelColumn.groups()).contains(this.group)){
-                        annotationTreeMap.put(excelColumn, object);
-                    }
-                }
+            //未注解直接跳过
+            if ( ! object.isAnnotationPresent(ExcelColumn.class)) {
+                continue;
             }
+            ExcelColumn excelColumn = object.getAnnotation(ExcelColumn.class);
+            if(excelColumn.type() == 0){
+                add2AnnoTreeMap(excelColumn, object);
+            }
+            if(this.isExport && excelColumn.type() == 2){
+                add2AnnoTreeMap(excelColumn, object);
+            }else {
+                add2AnnoTreeMap(excelColumn, object);
+            }
+        }
+    }
+
+    /**
+     * @Description: 添加入annotationMap中
+     * @Author: Javon Wang
+     * @Date: 2019/1/28
+     * @Time: 13:49
+     */
+    private void add2AnnoTreeMap(ExcelColumn excelColumn, AccessibleObject object){
+        //未指定group 或者 指定group
+        if(this.group == -1 || Arrays.asList(excelColumn.groups()).contains(this.group)){
+            this.annotationTreeMap.put(excelColumn, object);
         }
     }
 
@@ -209,7 +235,7 @@ public class ExcelConfiguration {
     private void initColumnTitles(){
         columnNameList = new ArrayList<>();
         if (annotationTreeMap.size() == 0){
-            return;
+            throw new InitialException("导出group不存在，请检查配置");
         }
         Iterator<ExcelColumn> iterator = annotationTreeMap.keySet().iterator();
         while(iterator.hasNext()){
@@ -225,8 +251,8 @@ public class ExcelConfiguration {
      */
     private void initWorkBook(){
         System.out.println("初始化workbook");
-        WorkbookType workbookType = excelTable.workbookType();
-        switch (workbookType){
+        WorkbookTypeEnum workbookTypeEnum = excelTable.workbookType();
+        switch (workbookTypeEnum){
             case XSSF:
                 this.workbook = new XSSFWorkbook();
                 break;
@@ -305,11 +331,11 @@ public class ExcelConfiguration {
         this.pagingField = pagingField;
     }
 
-    public Paging getPagingHandler() {
+    public PagingHandler getPagingHandler() {
         return pagingHandler;
     }
 
-    public void setPagingHandler(Paging pagingHandler) {
+    public void setPagingHandler(PagingHandler pagingHandler) {
         this.pagingHandler = pagingHandler;
     }
 

@@ -8,6 +8,7 @@ import excelhelper.util.date.DateFormatFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,11 +46,9 @@ public class ReflectUtil {
             }
             //日期格式
             if (Date.class.isAssignableFrom(field.getType())){
-                String pattern = DefaultDatePatternEnum.DEFAULT_DATE_PATTERN.getPattern();
-                if(field.isAnnotationPresent(DatePattern.class)){
-                    pattern = field.getAnnotation(DatePattern.class).pattern();
-                }
-                String dateString = DateFormatFactory.createDateFormat(pattern).format((Date) field.get(bean));
+                ExcelColumn annotation = field.getAnnotation(ExcelColumn.class);
+                String datePattern = annotation.datePattern();
+                String dateString = DateFormatFactory.createDateFormat(datePattern).format((Date) field.get(bean));
                 return dateString;
             }
             //其他类型暂不考虑
@@ -83,11 +82,10 @@ public class ReflectUtil {
             }
             //Date类型
             if(Date.class.isAssignableFrom(method.getReturnType())){
-                String pattern = DefaultDatePatternEnum.DEFAULT_DATE_PATTERN.getPattern();
-                if(method.isAnnotationPresent(DatePattern.class)){
-                    pattern = method.getAnnotation(DatePattern.class).pattern();
-                }
-                return DateFormatFactory.createDateFormat(pattern).format((Date) method.invoke(bean));
+                ExcelColumn annotation = method.getAnnotation(ExcelColumn.class);
+                String datePattern = annotation.datePattern();
+                String dateString = DateFormatFactory.createDateFormat(datePattern).format((Date) method.invoke(bean));
+                return dateString;
             }
             return method.invoke(bean).toString();
         } catch (IllegalAccessException e) {

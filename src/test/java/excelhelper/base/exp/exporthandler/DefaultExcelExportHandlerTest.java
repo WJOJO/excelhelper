@@ -1,8 +1,8 @@
-package excelhelper.base.exp.core.exporthandler;
+package excelhelper.base.exp.exporthandler;
 
 import excelhelper.base.exp.ListExportHandler;
 import excelhelper.base.exp.User;
-import excelhelper.base.exp.core.ExportHandlerFactory;
+import excelhelper.base.exp.ExportHandlerFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,7 +29,7 @@ public class DefaultExcelExportHandlerTest {
     @Test
     public void writeList() {
         long start = System.currentTimeMillis();
-        ListExportHandler<User> handler = ExportHandlerFactory.buildExcelHandler(User.class, -1);
+        ListExportHandler<User> handler = ExportHandlerFactory.buildExcelHandler(User.class, 1);
         handler.writeList(users);
         handler.writeFile("D://temp//DefaultExcelExportHandler.xlsx");
         long end = System.currentTimeMillis();

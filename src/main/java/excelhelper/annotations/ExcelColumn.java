@@ -26,5 +26,15 @@ public @interface ExcelColumn {
      */
     int[] groups() default {};
 
+    /**
+     * 0导入导出  1 尽导入  2 仅导出
+     * @return
+     */
+    int type() default 0;
+
+    /**
+     * 日期格式
+     */
+    String datePattern() default DatePattern.DEFAULT;
 
 }

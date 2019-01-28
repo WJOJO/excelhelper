@@ -11,11 +11,11 @@ import java.util.Map;
  * @description 不分页的做法
  * @create 2019-01-23 10:32
  */
-public class NonPaging<E> implements Paging<E> {
+public class NonPagingHandler<E> implements PagingHandler<E> {
 
     ExcelConfiguration configuration;
 
-    public NonPaging(ExcelConfiguration configuration){
+    public NonPagingHandler(ExcelConfiguration configuration){
         this.configuration = configuration;
     }
 

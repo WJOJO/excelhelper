@@ -10,12 +10,10 @@ import java.lang.annotation.Target;
  * @description 日期格式 仅用于日期类型属性值上
  * @create 2018-12-06 10:45
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface DatePattern {
+public interface DatePattern {
 
     /**
      * 日期格式转换
      */
-    String pattern() default "YYYY-MM-DD hh:mm:ss";
+    String DEFAULT =  "YYYY-MM-DD hh:mm:ss";
 }

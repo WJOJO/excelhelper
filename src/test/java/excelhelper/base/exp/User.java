@@ -8,11 +8,11 @@ import excelhelper.annotations.ExcelTable;
  * @description 测试类
  * @create 2018-12-06 17:47
  */
-@ExcelTable(enableTableName = true, tableName = "用户信息", sheetName = "用户的sheet", pagingColumn = "age")
+@ExcelTable(tableName = "用户信息", sheetName = "用户的sheet", pagingColumn = "age")
 public class User implements Cloneable{
 
 
-    @ExcelColumn(title = "名字", sort = 1)
+    @ExcelColumn(title = "名字", sort = 1, groups = {1, 2, 3})
     private String name;
 
     @ExcelColumn(title = "年龄", sort = 2)

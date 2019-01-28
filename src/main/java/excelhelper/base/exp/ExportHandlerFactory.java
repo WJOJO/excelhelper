@@ -1,10 +1,7 @@
-package excelhelper.base.exp.core;
+package excelhelper.base.exp;
 
 import excelhelper.base.configuration.ExcelConfiguration;
-import excelhelper.base.exp.ListExportHandler;
-import excelhelper.base.exp.core.exporthandler.DefaultCsvExportHandler;
-import excelhelper.base.exp.core.exporthandler.DefaultExcelExportHandler;
-import org.apache.poi.ss.formula.functions.T;
+import excelhelper.base.exp.exporthandler.DefaultExcelExportHandler;
 
 /**
  * @author Javon Wang
@@ -18,7 +15,7 @@ public class ExportHandlerFactory {
     }
 
     public static  <T> ListExportHandler<T> buildExcelHandler(Class<T> cls, int group){
-        ExcelConfiguration configuration = new ExcelConfiguration(cls, group);
+        ExcelConfiguration configuration = new ExcelConfiguration(cls, group, true);
         return new DefaultExcelExportHandler<>(configuration);
     }
 
@@ -27,7 +24,7 @@ public class ExportHandlerFactory {
     }
 
     public static <T> ListExportHandler<T> buildCsvHandler(Class<T> cls, int group){
-        ExcelConfiguration configuration = new ExcelConfiguration(cls, group);
+        ExcelConfiguration configuration = new ExcelConfiguration(cls, group, true);
         return new DefaultExcelExportHandler<>(configuration);
     }
 }

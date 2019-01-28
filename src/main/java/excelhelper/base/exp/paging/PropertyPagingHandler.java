@@ -13,11 +13,11 @@ import java.util.Map;
  * @description bean属性分页
  * @create 2019-01-23 09:45
  */
-public class PropertyPaging<E> implements Paging<E> {
+public class PropertyPagingHandler<E> implements PagingHandler<E> {
 
     ExcelConfiguration excelConfiguration;
 
-    public PropertyPaging(ExcelConfiguration excelConfiguration){
+    public PropertyPagingHandler(ExcelConfiguration excelConfiguration){
         this.excelConfiguration = excelConfiguration;
     }
 

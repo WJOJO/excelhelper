@@ -1,9 +1,11 @@
-package excelhelper.base.exp.core.writer;
+package excelhelper.base.exp.writer;
 
 import excelhelper.annotations.ExcelColumn;
 import excelhelper.base.configuration.ExcelConfiguration;
 import excelhelper.base.constants.CellStyleType;
 import excelhelper.util.ReflectUtil;
+import excelhelper.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -21,6 +23,7 @@ import java.util.Map;
  * @description bean导出excel
  * @create 2019-01-22 13:54
  */
+@Slf4j
 public class BeanSheetWriter<T> implements BaseWriter<T> {
 
     private final Sheet sheet;
@@ -53,6 +56,10 @@ public class BeanSheetWriter<T> implements BaseWriter<T> {
      * @Time: 14:28
      */
     private void createTableHeader(){
+        if(StringUtils.isEmpty(configuration.getExcelTable().tableName())){
+            log.info("excelTable注解无tableName，不进行表格名称初始化");
+            return;
+        }
         Row header = sheet.createRow(rowNum++);
         header.setHeightInPoints(20);
         Cell cell = header.createCell(0);
@@ -98,11 +105,11 @@ public class BeanSheetWriter<T> implements BaseWriter<T> {
         Row row = sheet.createRow(rowNum++);
         Iterator<Map.Entry<ExcelColumn, AccessibleObject>> iterator =
                 configuration.getAnnotationTreeMap().entrySet().iterator();
+        String value = "";
         while(iterator.hasNext()){
             Map.Entry<ExcelColumn, AccessibleObject> annoKey = iterator.next();
             Cell cell = row.createCell(columnNum ++);
             cell.setCellStyle(configuration.getCellStyleMap().get(CellStyleType.CELL));
-            String value = "";
             AccessibleObject fieldOrMethod = annoKey.getValue();
             if (fieldOrMethod instanceof Field) {
                 value = ReflectUtil.getValueFromField((Field) fieldOrMethod, bean);

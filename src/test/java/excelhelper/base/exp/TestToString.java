@@ -3,6 +3,8 @@ package excelhelper.base.exp;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Javon Wang
@@ -21,6 +23,16 @@ public class TestToString {
         String file = this.getClass().getClassLoader().getResource("").getFile();
         System.out.println(file);
 
+    }
+
+
+    @Test
+    public void testArraysAsList(){
+        int[] array = {1,2,3,4,5};
+        List<int[]> ints = Arrays.asList(array);
+
+        Integer[] array1 = {1,2,3,4,5};
+        List<Integer> integers = Arrays.asList(array1);
     }
 
 }

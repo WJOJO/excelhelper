@@ -8,7 +8,7 @@ import java.util.Map;
  * @description 分页接口
  * @create 2019-01-23 09:44
  */
-public interface Paging<E> {
+public interface PagingHandler<E> {
 
     /**
      * beanlist分页

@@ -1,10 +1,10 @@
-package excelhelper.base.exp.core.exporthandler;
+package excelhelper.base.exp.exporthandler;
 
 import excelhelper.base.configuration.ExcelConfiguration;
 import excelhelper.base.exp.ListExportHandler;
-import excelhelper.base.exp.core.writer.BaseWriter;
-import excelhelper.base.exp.core.writer.BeanSheetWriter;
-import excelhelper.base.exp.paging.Paging;
+import excelhelper.base.exp.writer.BaseWriter;
+import excelhelper.base.exp.writer.BeanSheetWriter;
+import excelhelper.base.exp.paging.PagingHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileOutputStream;
@@ -40,7 +40,7 @@ public class DefaultExcelExportHandler<T> implements ListExportHandler<T> {
     @Override
     public void writeList(List<T> beanList) {
         beanList = listSorted(beanList);
-        Paging pagingHandler = configuration.getPagingHandler();
+        PagingHandler pagingHandler = configuration.getPagingHandler();
         Map<String, List<T>> map = pagingHandler.paging(beanList);
 
         Iterator<Map.Entry<String, List<T>>> iterator = map.entrySet().iterator();
